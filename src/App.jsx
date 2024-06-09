@@ -1,4 +1,5 @@
-import { CssBaseline, ThemeProvider } from "@mui/material";
+import { ThemeProvider } from "@mui/material/styles";
+import { CssBaseline } from "@mui/material";
 import darkTheme from "./theme/DarkTheme";
 import Routers from "./Routers/Routers";
 

@@ -1,6 +1,7 @@
-import { createTheme } from "@mui/material";
+import { createTheme } from "@mui/material/styles";
 
 const darkTheme = createTheme({
+  direction: "rtl",
   palette: {
     mode: "dark", // This sets the theme to dark mode
     primary: {

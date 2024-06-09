@@ -1,12 +1,19 @@
 import { Route, Routes } from "react-router-dom";
-import Navbar from "../components/admins/Navbar";
-import DashBoard from "../components/admins/DashBoard";
-import Dish from "../components/admins/Dishes";
-import Menu from "../components/admins/Menus";
-import Order from "../components/admins/Orders";
-import Tables from "../components/admins/Tables";
+import Navbar from "../admins/Navbar";
+import DashBoard from "../admins/DashBoard";
+import Dish from "../admins/Dishes";
+import Menu from "../admins/Menus";
+import Order from "../admins/Orders";
+import Tables from "../admins/Tables";
+import Logout from "../admins/Logout";
+import { useEffect } from "react";
 
 const AdminRouters = () => {
+  useEffect(() => {
+    if (!localStorage.getItem("token")) {
+      window.location.href = "/";
+    }
+  }, []);
   return (
     <>
       <Navbar>
@@ -16,6 +23,7 @@ const AdminRouters = () => {
           <Route path="/menu" element={<Menu />} />
           <Route path="/order" element={<Order />} />
           <Route path="/table" element={<Tables />} />
+          <Route path="/logout" element={<Logout />} />
         </Routes>
       </Navbar>
     </>
