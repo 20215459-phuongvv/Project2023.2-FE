@@ -140,55 +140,55 @@ export default function Navbar({ children }) {
         </Toolbar>
         <Divider />
         <List component="nav">
-          <ListItemButton>
-            <Link to="/admin" className="flex">
+          <Link to="/admin" className="flex">
+            <ListItemButton>
               <ListItemIcon>
                 <DashboardIcon />
               </ListItemIcon>
               <ListItemText primary="Dashboard" />
-            </Link>
-          </ListItemButton>
-          <ListItemButton>
-            <Link to="/admin/order" className="flex">
+            </ListItemButton>
+          </Link>
+          <Link to="/admin/order" className="flex">
+            <ListItemButton>
               <ListItemIcon>
                 <ShoppingCartIcon />
               </ListItemIcon>
               <ListItemText primary="Orders" />
-            </Link>
-          </ListItemButton>
-          <ListItemButton>
-            <Link to="/admin/menu" className="flex">
+            </ListItemButton>
+          </Link>
+          <Link to="/admin/menu" className="flex">
+            <ListItemButton>
               <ListItemIcon>
                 <MenuIcon />
               </ListItemIcon>
               <ListItemText primary="Menus" />
-            </Link>
-          </ListItemButton>
-          <ListItemButton>
-            <Link to="/admin/dish" className="flex">
+            </ListItemButton>
+          </Link>
+          <Link to="/admin/dish" className="flex">
+            <ListItemButton>
               <ListItemIcon>
                 <HvacIcon />
               </ListItemIcon>
               <ListItemText primary="Dishes" />
-            </Link>
-          </ListItemButton>
-          <ListItemButton>
-            <Link to="/admin/table" className="flex">
+            </ListItemButton>
+          </Link>
+          <Link to="/admin/table" className="flex">
+            <ListItemButton>
               <ListItemIcon>
                 <TableRestaurantIcon />
               </ListItemIcon>
               <ListItemText primary="Tables" />
-            </Link>
-          </ListItemButton>
+            </ListItemButton>
+          </Link>
           <Divider />
-          <ListItemButton>
-            <Link to="/admin/logout" className="flex">
+          <Link to="/admin/logout" className="flex">
+            <ListItemButton>
               <ListItemIcon>
                 <LogoutIcon />
               </ListItemIcon>
               <ListItemText primary="Logout" />
-            </Link>
-          </ListItemButton>
+            </ListItemButton>
+          </Link>
         </List>
       </Drawer>
       <Box
