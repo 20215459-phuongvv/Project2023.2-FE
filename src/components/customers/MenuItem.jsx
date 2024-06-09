@@ -42,7 +42,6 @@ const MenuItem = ({ dish, orderId }) => {
         if (data) alert("Successfully");
       });
   };
-
   return (
     <div className="flex flex-col gap-2 p-4">
       <img src={dish.thumbnail} className="w-full" />
@@ -82,7 +81,12 @@ const MenuItem = ({ dish, orderId }) => {
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Hủy</Button>
-          <Button onClick={handleCreateOrderItem} autoFocus variant="contained">
+          <Button
+            onClick={handleCreateOrderItem}
+            autoFocus
+            variant="contained"
+            disabled={dish.dishStatus === "0"}
+          >
             Thêm
           </Button>
         </DialogActions>

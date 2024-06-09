@@ -24,7 +24,6 @@ const NotificationComponent = ({ children, tableId, setStatus }) => {
       .then((data) => setNotionfications(data));
   }, [tableId]);
 
-  console.log(notifications);
   const handleClickOpen = () => {
     setOpen(true);
   };

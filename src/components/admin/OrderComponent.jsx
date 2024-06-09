@@ -30,7 +30,27 @@ const OrderComponent = ({ tableId, children }) => {
   const handleClose = () => {
     setOpen(false);
   };
-  console.log(orders);
+  const handleUpdate = async (id) => {
+    await fetch(
+      `http://localhost:8080/admin/orders/${orders.orderId}/items/${id}/status`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      }
+    );
+    await fetch(`http://localhost:8080/admin/orders/tables/${tableId}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => setOrders(data));
+  };
   return (
     <Fragment>
       <div onClick={handleClickOpen}>{children}</div>
@@ -45,16 +65,28 @@ const OrderComponent = ({ tableId, children }) => {
           {orders?.orderItemResponseDTO?.map((order) => (
             <div
               key={order.id}
-              className="flex gap-2 justify-between items-center min-w-[300px]"
+              className="grid grid-cols-4 gap-2 justify-between items-center min-w-[400px] my-2"
             >
               <p>{order.dishName}</p>
               <p>{order.dishQuantity}</p>
-              <p>{order.dishStatus === "Đang ra món" ? "x" : "+"}</p>
+              <p>
+                {order.dishStatus === "Đang ra món" ||
+                order.dishStatus === "Đang chọn"
+                  ? "x"
+                  : "+"}
+              </p>
+              <Button
+                variant="contained"
+                disabled={order.dishStatus === "Đã ra món"}
+                onClick={() => handleUpdate(order.orderItemId)}
+              >
+                Cập nhật
+              </Button>
             </div>
           ))}
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose}>Xác nhận</Button>
+          <Button onClick={handleClose}>Đóng</Button>
         </DialogActions>
       </Dialog>
     </Fragment>

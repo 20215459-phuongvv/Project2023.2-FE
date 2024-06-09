@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import {
   Button,
   Container,
@@ -16,6 +17,7 @@ const Cart = () => {
   const params = useParams();
   const navigate = useNavigate();
   const [orderItems, setOrderItems] = useState([]);
+  const [orderId, setOrderId] = useState(0);
   const handleCreateOrder = async () => {
     await fetch(`http://localhost:8080/${params.tableId}/menus`)
       .then((res) => res.json())
@@ -31,10 +33,48 @@ const Cart = () => {
       fetch(`http://localhost:8080/orders/tables/${params.tableId}`)
         .then((res) => res.json())
         .then((data) => {
-          setOrderItems(data.orderItemResponseDTO);
-        });
+          setOrderItems(
+            data?.orderItemResponseDTO ? data?.orderItemResponseDTO : []
+          );
+          setOrderId(data?.orderId ? data?.orderId : 0);
+        })
+        .catch(() => console.log("Bàn trống"));
     }
   }, [params.tableId]);
+  const handleSendOrder = () => {
+    fetch(`http://localhost:8080/orders/${orderId}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.orderId) {
+          alert("Gửi order thành công");
+        }
+      });
+  };
+  const handleRequest = (id) => {
+    fetch(`http://localhost:8080/orders/${orderId}/items/${id}/request`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => alert("Yêu cầu thanh toán thành công"))
+      .catch((err) => alert(err));
+  };
+  const handlePaymentRequest = () => {
+    fetch(`http://localhost:8080/tables/${params.tableId}/payment/request`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => alert("Đã gửi yêu cầu thanh toán"))
+      .catch((err) => alert(err));
+  };
   return (
     <Container>
       <h1 className="text-4xl font-semibold flex justify-center items-center mt-8 gap-2">
@@ -44,7 +84,7 @@ const Cart = () => {
         <Button
           variant="outlined"
           onClick={handleCreateOrder}
-          disabled={orderItems.length > 0}
+          disabled={orderItems?.length > 0}
         >
           Tạo order
         </Button>
@@ -62,6 +102,7 @@ const Cart = () => {
               <TableCell>Số tiền</TableCell>
               <TableCell>Ghi chú</TableCell>
               <TableCell>Trạng thái</TableCell>
+              <TableCell>Hỗ trợ món</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -78,11 +119,35 @@ const Cart = () => {
                   <TableCell>{orderItem.customPrice}</TableCell>
                   <TableCell>{orderItem.dishNote}</TableCell>
                   <TableCell>{orderItem.dishStatus}</TableCell>
+                  <TableCell>
+                    <Button
+                      variant="outlined"
+                      onClick={() => handleRequest(orderItem.orderItemId)}
+                    >
+                      Gửi
+                    </Button>
+                  </TableCell>
                 </TableRow>
               ))}
           </TableBody>
         </Table>
       </TableContainer>
+      <div className="flex justify-center mt-8 gap-8">
+        <Button
+          variant="contained"
+          onClick={handleSendOrder}
+          disabled={orderItems.length === 0}
+        >
+          Gửi order
+        </Button>
+        <Button
+          variant="contained"
+          onClick={handlePaymentRequest}
+          disabled={orderItems.length === 0}
+        >
+          Yêu cầu thanh toán
+        </Button>
+      </div>
     </Container>
   );
 };
