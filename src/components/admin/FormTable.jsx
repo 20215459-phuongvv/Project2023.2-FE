@@ -25,7 +25,7 @@ const FormTable = ({ setStatus, table }) => {
     if (data.tableId) {
       setStatus(true);
       setTableName("");
-      alert("Successfully");
+      alert("Thành công");
     } else {
       setStatus(false);
       setTableName("");
@@ -45,7 +45,7 @@ const FormTable = ({ setStatus, table }) => {
         },
       }
     );
-    alert("Table deleted successfully");
+    alert("Xóa bàn thành công");
     setStatus(true);
   };
   return (

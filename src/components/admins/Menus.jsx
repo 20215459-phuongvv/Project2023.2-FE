@@ -14,7 +14,7 @@ const Menu = () => {
   return (
     <div>
       <div className="text-xl font-semibold my-4 flex justify-between">
-        <h2>All menus</h2>
+        <h2>Danh sách thực đơn</h2>
         <Fab color="secondary" aria-label="edit">
           <EditIcon />
         </Fab>
@@ -24,9 +24,8 @@ const Menu = () => {
           <TableHead>
             <TableRow>
               <TableCell>STT</TableCell>
-              <TableCell>Name</TableCell>
-              <TableCell>Status</TableCell>
-              <TableCell>Update</TableCell>
+              <TableCell>Tên thực đơn</TableCell>
+              <TableCell>Cập nhật</TableCell>
             </TableRow>
           </TableHead>
           <TableBody></TableBody>

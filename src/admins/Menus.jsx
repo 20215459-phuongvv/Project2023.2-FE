@@ -40,7 +40,7 @@ const Menu = () => {
   return (
     <div>
       <div className="text-xl font-semibold my-4 flex justify-between">
-        <h2>All menus</h2>
+        <h2>Danh sách thực đơn</h2>
         <AlertDialog
           component={<FormMenu setStatus={setStatus} />}
           title="Thêm danh mục"
@@ -55,7 +55,7 @@ const Menu = () => {
           <TableHead>
             <TableRow>
               <TableCell>STT</TableCell>
-              <TableCell>Name</TableCell>
+              <TableCell>Tên thực đơn</TableCell>
               <TableCell>Cập nhật</TableCell>
             </TableRow>
           </TableHead>

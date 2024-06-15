@@ -11,7 +11,7 @@ import {
 const DashBoard = () => {
   return (
     <div>
-      <h2 className="text-xl font-semibold my-4">Recent Order</h2>
+      <h2 className="text-xl font-semibold my-4">Danh sách đơn hàng</h2>
       <TableContainer component={Paper}>
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead>

@@ -1,40 +1,52 @@
-import { Box, Button, Container, CssBaseline, TextField } from "@mui/material";
+import { Box, Button, Container, CssBaseline, TextField, Alert } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const LoginForm = () => {
   const [values, setValues] = useState({ email: "", password: "" });
+  const [errorMessage, setErrorMessage] = useState("");
   const navigate = useNavigate();
+
   useEffect(() => {
     if (localStorage.getItem("token")) {
       navigate("/admin");
     }
   }, [navigate]);
+
   const handleSubmitLogin = async (e) => {
     e.preventDefault();
-    const res = await fetch("http://localhost:8080/auth/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        email: values.email,
-        password: values.password,
-      }),
-    });
+    try {
+      const res = await fetch("http://localhost:8080/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: values.email,
+          password: values.password,
+        }),
+      });
 
-    const data = await res.json();
-    if (data.status) {
-      localStorage.setItem("token", data.jwt);
-      navigate("/admin");
+      const data = await res.json();
+      if (res.status === 200) {
+        localStorage.setItem("token", data.jwt);
+        navigate("/admin");
+      } else {
+        setErrorMessage("Tài khoản hoặc mật khẩu không đúng vui lòng thử lại");
+      }
+    } catch (error) {
+      console.error("Error during login:", error);
+      setErrorMessage("Có lỗi xảy ra. Vui lòng thử lại sau.");
     }
   };
+
   return (
     <div className="flex justify-center items-center h-[90vh]">
       <Container component="main" maxWidth="xs">
         <CssBaseline />
         <div>
-          <h2 className="text-center text-3xl font-semibold">Login</h2>
+          <h2 className="text-center text-3xl font-semibold">Đăng nhập</h2>
+          {errorMessage && <Alert severity="error">{errorMessage}</Alert>}
           <Box
             component="form"
             noValidate
@@ -46,7 +58,7 @@ const LoginForm = () => {
               required
               fullWidth
               id="email"
-              label="Email Address"
+              label="Tên đăng nhập"
               name="email"
               autoComplete="email"
               autoFocus
@@ -58,7 +70,7 @@ const LoginForm = () => {
               required
               fullWidth
               name="password"
-              label="Password"
+              label="Mật khẩu"
               type="password"
               id="password"
               autoComplete="current-password"
@@ -75,7 +87,7 @@ const LoginForm = () => {
               color="primary"
               sx={{ mt: 2, padding: "1rem" }}
             >
-              Login
+              Đăng nhập
             </Button>
           </Box>
           {/* <Typography variant="body2" align="center" sx={{ mt: 3 }}>

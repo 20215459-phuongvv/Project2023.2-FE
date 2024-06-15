@@ -45,9 +45,6 @@ const Order = () => {
 
   return (
     <div className="h-full">
-      <div className="text-xl font-semibold my-4 flex justify-between">
-        <h2>All Orders</h2>
-      </div>
       <div className="flex justify-between p-4 bg-slate-800">
         <Button
           variant={tableStatus === "Đang order" ? "contained" : "outlined"}

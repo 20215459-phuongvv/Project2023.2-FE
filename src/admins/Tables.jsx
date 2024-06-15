@@ -25,7 +25,7 @@ const Tables = () => {
   return (
     <div>
       <div className="text-xl font-semibold my-4 flex justify-between">
-        <h2>All tables</h2>
+        <h2>Danh sách bàn</h2>
         <AlertDialog
           component={<FormTable setStatus={setStatus} />}
           title="Thêm bàn?"

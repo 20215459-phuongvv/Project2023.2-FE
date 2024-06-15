@@ -14,7 +14,7 @@ const Dish = () => {
   return (
     <div>
       <div className="text-xl font-semibold my-4 flex justify-between">
-        <h2>All dishs</h2>
+        <h2>Danh sách món ăn</h2>
         <Fab color="secondary" aria-label="edit">
           <EditIcon />
         </Fab>
@@ -24,11 +24,12 @@ const Dish = () => {
           <TableHead>
             <TableRow>
               <TableCell>STT</TableCell>
-              <TableCell>Name</TableCell>
-              <TableCell>Description</TableCell>
-              <TableCell>Price</TableCell>
-              <TableCell>Status</TableCell>
-              <TableCell>Update</TableCell>
+              <TableCell>Hình ảnh</TableCell>
+              <TableCell>Tên món ăn</TableCell>
+              <TableCell>Mô tả</TableCell>
+              <TableCell>Giá tiền</TableCell>
+              <TableCell>Trạng thái</TableCell>
+              <TableCell>Cập nhật</TableCell>
             </TableRow>
           </TableHead>
           <TableBody></TableBody>

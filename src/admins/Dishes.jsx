@@ -30,7 +30,7 @@ const Dish = () => {
   return (
     <div>
       <div className="text-xl font-semibold my-4 flex justify-between">
-        <h2>All dishs</h2>
+        <h2>Danh sách món ăn</h2>
         <AlertDialog
           title="Tạo món"
           component={<FormDish setStatus={setStatus} />}
@@ -45,20 +45,28 @@ const Dish = () => {
           <TableHead>
             <TableRow>
               <TableCell>STT</TableCell>
-              <TableCell>Name</TableCell>
-              <TableCell>Price</TableCell>
-              <TableCell>Status</TableCell>
-              <TableCell>Update</TableCell>
+              <TableCell>Hình ảnh</TableCell>
+              <TableCell>Tên món ăn</TableCell>
+              <TableCell>Giá tiền</TableCell>
+              <TableCell>Trạng thái</TableCell>
+              <TableCell>Cập nhật</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {dishes.map((dish, index) => (
               <TableRow key={index}>
                 <TableCell>{index + 1}</TableCell>
+                <TableCell>
+                  <img
+                    src={dish.thumbnail}
+                    alt={dish.dishName}
+                    style={{ width: 50, height: 50, objectFit: "cover" }}
+                  />
+                </TableCell>
                 <TableCell>{dish.dishName}</TableCell>
                 <TableCell>{dish.dishPrice}</TableCell>
                 <TableCell>
-                  {dish.dishStatus === "1" ? "Còn món" : "Hết món"}
+                  {dish.dishStatus == 1 ? "Còn món" : "Hết món"}
                 </TableCell>
                 <TableCell>
                   <AlertDialog

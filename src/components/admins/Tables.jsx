@@ -13,7 +13,7 @@ const Tables = () => {
   return (
     <div>
       <div className="text-xl font-semibold my-4 flex justify-between">
-        <h2>All dishs</h2>
+        <h2>Danh sách món ăn</h2>
         <Fab color="secondary" aria-label="edit">
           <EditIcon />
         </Fab>

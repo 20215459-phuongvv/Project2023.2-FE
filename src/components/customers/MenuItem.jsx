@@ -39,7 +39,7 @@ const MenuItem = ({ dish, orderId }) => {
     })
       .then((res) => res.json())
       .then((data) => {
-        if (data) alert("Successfully");
+        if (data) alert("Thành công");
       });
   };
   return (

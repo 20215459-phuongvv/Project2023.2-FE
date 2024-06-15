@@ -23,7 +23,7 @@ const FormMenu = ({ setStatus, menu }) => {
     );
     const data = await res.json();
     if (data.menuId) {
-      alert("Successfully");
+      alert("Thành công");
       setStatus(true);
     } else {
       setStatus(false);
@@ -43,7 +43,7 @@ const FormMenu = ({ setStatus, menu }) => {
       }
     );
     setStatus(true);
-    alert("Delete successfully");
+    alert("Xóa thực đơn thành công");
   };
   return (
     <Box

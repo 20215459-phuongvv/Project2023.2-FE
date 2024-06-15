@@ -17,6 +17,9 @@ import HvacIcon from "@mui/icons-material/Hvac";
 import LogoutIcon from "@mui/icons-material/Logout";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import NotificationsIcon from "@mui/icons-material/Notifications";
+import AssignmentIcon from "@mui/icons-material/Assignment";
+import RestaurantMenuIcon from "@mui/icons-material/RestaurantMenu";
+import FastfoodIcon from "@mui/icons-material/Fastfood";
 import {
   List,
   ListItemButton,
@@ -27,11 +30,11 @@ import { Link, useParams } from "react-router-dom";
 
 const drawerWidth = 240;
 const Label = {
-  menu: "Menu",
-  dish: "Dish",
-  order: "Order",
-  table: "Table",
-  logout: "Logout",
+  menu: "Quản lý thực đơn",
+  dish: "Quản lý món ăn",
+  order: "Quản lý phục vụ",
+  table: "Quản lý bàn",
+  logout: "Đăng xuất",
 };
 const AppBar = styled(MuiAppBar, {
   shouldForwardProp: (prop) => prop !== "open",
@@ -118,11 +121,6 @@ export default function Navbar({ children }) {
           >
             {!menu ? "Dashboard" : Label[menu]}
           </Typography>
-          <IconButton color="inherit">
-            <Badge badgeContent={4} color="secondary">
-              <NotificationsIcon />
-            </Badge>
-          </IconButton>
         </Toolbar>
       </AppBar>
       <Drawer variant="permanent" open={open}>
@@ -140,44 +138,44 @@ export default function Navbar({ children }) {
         </Toolbar>
         <Divider />
         <List component="nav">
-          <Link to="/admin" className="flex">
-            <ListItemButton>
-              <ListItemIcon>
-                <DashboardIcon />
-              </ListItemIcon>
-              <ListItemText primary="Dashboard" />
-            </ListItemButton>
-          </Link>
-          <Link to="/admin/order" className="flex">
-            <ListItemButton>
-              <ListItemIcon>
-                <ShoppingCartIcon />
-              </ListItemIcon>
-              <ListItemText primary="Orders" />
-            </ListItemButton>
-          </Link>
-          <Link to="/admin/menu" className="flex">
-            <ListItemButton>
-              <ListItemIcon>
-                <MenuIcon />
-              </ListItemIcon>
-              <ListItemText primary="Menus" />
-            </ListItemButton>
-          </Link>
-          <Link to="/admin/dish" className="flex">
-            <ListItemButton>
-              <ListItemIcon>
-                <HvacIcon />
-              </ListItemIcon>
-              <ListItemText primary="Dishes" />
-            </ListItemButton>
-          </Link>
+        <Link to="/admin" className="flex">
+        <ListItemButton>
+          <ListItemIcon>
+            <ShoppingCartIcon />
+          </ListItemIcon>
+          <ListItemText primary="Quản lý đơn hàng" />
+        </ListItemButton>
+        </Link>
+        <Link to="/admin/order" className="flex">
+          <ListItemButton>
+            <ListItemIcon>
+              <AssignmentIcon />
+            </ListItemIcon>
+            <ListItemText primary="Quản lý phục vụ" />
+          </ListItemButton>
+        </Link>
+        <Link to="/admin/menu" className="flex">
+          <ListItemButton>
+            <ListItemIcon>
+              <RestaurantMenuIcon />
+            </ListItemIcon>
+            <ListItemText primary="Quản lý thực đơn" />
+          </ListItemButton>
+        </Link>
+        <Link to="/admin/dish" className="flex">
+          <ListItemButton>
+            <ListItemIcon>
+              <FastfoodIcon />
+            </ListItemIcon>
+            <ListItemText primary="Quản lý món ăn" />
+          </ListItemButton>
+        </Link>
           <Link to="/admin/table" className="flex">
             <ListItemButton>
               <ListItemIcon>
                 <TableRestaurantIcon />
               </ListItemIcon>
-              <ListItemText primary="Tables" />
+              <ListItemText primary="Quản lý bàn" />
             </ListItemButton>
           </Link>
           <Divider />
@@ -186,7 +184,7 @@ export default function Navbar({ children }) {
               <ListItemIcon>
                 <LogoutIcon />
               </ListItemIcon>
-              <ListItemText primary="Logout" />
+              <ListItemText primary="Đăng xuất" />
             </ListItemButton>
           </Link>
         </List>

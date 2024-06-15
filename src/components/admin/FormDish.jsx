@@ -20,7 +20,9 @@ const FormDish = ({ setStatus, dish }) => {
     ...dish,
     thumbnail: null,
   });
+  const [thumbnailPreview, setThumbnailPreview] = useState(null);
   const [menus, setMenus] = useState([]);
+  
   useEffect(() => {
     fetch("http://localhost:8080/menus", {
       method: "GET",
@@ -38,6 +40,7 @@ const FormDish = ({ setStatus, dish }) => {
         console.log(err);
       });
   }, []);
+  
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormValues({
@@ -47,11 +50,14 @@ const FormDish = ({ setStatus, dish }) => {
   };
 
   const handleFileChange = (e) => {
+    const file = e.target.files[0];
     setFormValues({
       ...formValues,
-      thumbnail: e.target.files[0],
+      thumbnail: file,
     });
+    setThumbnailPreview(URL.createObjectURL(file));
   };
+  
   const handleChange = (e) => {
     console.log(typeof e.target.value);
     setFormValues({
@@ -60,12 +66,9 @@ const FormDish = ({ setStatus, dish }) => {
     });
   };
 
-  useEffect(() => {}, []);
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Tạo FormData object
     const formData = new FormData();
     formData.append("dishName", formValues.dishName);
     formData.append("dishPrice", formValues.dishPrice);
@@ -77,7 +80,6 @@ const FormDish = ({ setStatus, dish }) => {
 
     console.log(formData);
     try {
-      // Gửi POST request với FormData
       const response = await fetch(
         `http://localhost:8080/admin/dishes${dish ? "/" + dish.dishId : ""}`,
         {
@@ -90,7 +92,7 @@ const FormDish = ({ setStatus, dish }) => {
       );
       const data = await response.json();
       if (data.dishId) {
-        alert("Successfully");
+        alert("Thành công");
         setStatus(true);
         setFormValues({
           dishName: "",
@@ -99,11 +101,13 @@ const FormDish = ({ setStatus, dish }) => {
           menuId: 0,
           thumbnail: null,
         });
+        setThumbnailPreview(null);
       }
     } catch (error) {
       console.error("There was an error!", error);
     }
   };
+
   const handleDeleteDish = async (e) => {
     e.preventDefault();
     try {
@@ -116,12 +120,13 @@ const FormDish = ({ setStatus, dish }) => {
           },
         }
       );
-      alert("Successfully");
+      alert("Thành công");
       setStatus(true);
     } catch (error) {
       console.error("There was an error!", error);
     }
   };
+
   return (
     <Box
       component="form"
@@ -136,7 +141,7 @@ const FormDish = ({ setStatus, dish }) => {
       }}
     >
       <TextField
-        label="Dish Name"
+        label="Tên món ăn"
         variant="outlined"
         name="dishName"
         value={formValues.dishName}
@@ -144,7 +149,7 @@ const FormDish = ({ setStatus, dish }) => {
         required
       />
       <TextField
-        label="Dish Price"
+        label="Giá tiền"
         variant="outlined"
         name="dishPrice"
         type="number"
@@ -153,7 +158,7 @@ const FormDish = ({ setStatus, dish }) => {
         required
       />
       <TextField
-        label="Dish Status"
+        label="Trạng thái"
         variant="outlined"
         name="dishStatus"
         type="number"
@@ -179,7 +184,7 @@ const FormDish = ({ setStatus, dish }) => {
         </Select>
       </FormControl>
       <Button variant="outlined" component="label">
-        Upload Thumbnail
+        Tải ảnh lên
         <input
           type="file"
           hidden
@@ -187,6 +192,18 @@ const FormDish = ({ setStatus, dish }) => {
           onChange={handleFileChange}
         />
       </Button>
+      {thumbnailPreview && (
+        <Box
+          component="img"
+          src={thumbnailPreview}
+          alt="Thumbnail Preview"
+          sx={{
+            width: '100%',
+            height: 'auto',
+            marginTop: 2,
+          }}
+        />
+      )}
       {dish ? (
         <div className="flex gap-2">
           <Button
