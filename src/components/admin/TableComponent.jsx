@@ -1,6 +1,7 @@
 /* eslint-disable react/prop-types */
-
-import { Button } from "@mui/material";
+import {
+  Button,
+} from "@mui/material";
 import NotificationComponent from "./NotificationComponent";
 import OrderComponent from "./OrderComponent";
 import BillComponent from "./BillComponent";
@@ -9,7 +10,10 @@ import { useEffect, useState } from "react";
 const TableComponent = ({ table, setStatus }) => {
   const [order, setOrder] = useState({});
   const [bill, setBill] = useState(null);
-  useEffect(() => {
+  const [isBillDialogOpen, setIsBillDialogOpen] = useState(false);
+
+  // Function to fetch order details using Polling
+  const fetchOrderDetails = () => {
     fetch(`http://localhost:8080/orders/tables/${table.tableId}`, {
       method: "GET",
       headers: {
@@ -18,9 +22,12 @@ const TableComponent = ({ table, setStatus }) => {
       },
     })
       .then((res) => res.json())
-      .then((data) => setOrder(data));
-  }, []);
-  useEffect(() => {
+      .then((data) => setOrder(data))
+      .catch((error) => console.error("Error fetching order:", error));
+  };
+
+  // Function to fetch bill details using Polling
+  const fetchBillDetails = () => {
     try {
       if (order?.orderId) {
         fetch(`http://localhost:8080/orders/${order.orderId}/bill`, {
@@ -32,13 +39,34 @@ const TableComponent = ({ table, setStatus }) => {
           .then((res) => res.json())
           .then((data) => {
             setBill(data?.message ? null : data);
+          })
+          .catch((error) => {
+            setBill(null);
+            console.error("Error fetching bill:", error);
           });
       }
     } catch (error) {
       setBill(null);
+      console.error("Error fetching bill:", error);
     }
-  }, [order]);
-  console.log(bill);
+  };
+
+  useEffect(() => {
+    // Initial fetch
+    fetchOrderDetails();
+    fetchBillDetails();
+
+    // Polling interval
+    const orderPollInterval = setInterval(fetchOrderDetails, 5000); // Poll every 5 seconds
+    const billPollInterval = setInterval(fetchBillDetails, 5000); // Poll every 5 seconds
+
+    // Clear intervals on component unmount
+    return () => {
+      clearInterval(orderPollInterval);
+      clearInterval(billPollInterval);
+    };
+  }, [table.tableId]); // Only re-run effect if tableId changes
+
   const handleMakeTableEmpty = async () => {
     await fetch(`http://localhost:8080/admin/tables/${table.tableId}/status`, {
       method: "PUT",
@@ -51,10 +79,14 @@ const TableComponent = ({ table, setStatus }) => {
       .then((req) => req.json())
       .then((data) => {
         if (data.tableId) {
-          alert("Làm trống bàn");
+          alert("Làm trống bàn thành công");
         }
+      })
+      .catch((error) => {
+        console.error("Error making table empty:", error);
       });
   };
+
   const handleCreateBill = async () => {
     await fetch(`http://localhost:8080/admin/orders/${order.orderId}/bill`, {
       method: "POST",
@@ -65,9 +97,18 @@ const TableComponent = ({ table, setStatus }) => {
     })
       .then((res) => res.json())
       .then((data) => {
-        setBill(data);
+        if (data.message) {
+          alert(data.message);
+        } else {
+          setBill(data);
+          setIsBillDialogOpen(true); // Open the bill dialog
+        }
+      })
+      .catch((error) => {
+        alert(error.message);
       });
   };
+
   return (
     <div className="m-2 border">
       <p>Tên: {table.tableName}</p>
@@ -86,6 +127,9 @@ const TableComponent = ({ table, setStatus }) => {
               bill={bill}
               tableId={table.tableId}
               orderId={order.orderId}
+              isOpen={isBillDialogOpen}
+              setIsOpen={setIsBillDialogOpen}
+              setBill={setBill}
             >
               Xem bill
             </BillComponent>
@@ -105,7 +149,7 @@ const TableComponent = ({ table, setStatus }) => {
           </OrderComponent>
         )}
       </p>
-      <p>Tổng thời gian: {table.tableTime}</p>
+      <p>Tổng thời gian: {table.totalTime} phút</p>
       <p className="flex gap-2 items-center">
         Số thông báo: {table.notificationNumber}
         {table.notificationNumber > 0 && (

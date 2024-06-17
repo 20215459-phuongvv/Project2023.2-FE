@@ -4,8 +4,14 @@ import NavBar from "../components/customers/NavBar";
 import LoginForm from "../pages/LoginForm";
 import Menu from "../pages/Menu";
 import Cart from "../pages/Cart";
+import { useEffect } from "react";
 
 const CustomerRouters = () => {
+  useEffect(() => {
+    if (localStorage.getItem("token")) {
+      window.location.href = "/admin";
+    }
+  }, []);
   return (
     <>
       <nav className="sticky top-0 z-50">

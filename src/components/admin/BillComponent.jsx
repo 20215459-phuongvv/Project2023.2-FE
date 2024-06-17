@@ -1,5 +1,4 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable react/prop-types */
+import React, { Fragment, useEffect } from "react";
 import {
   Button,
   Dialog,
@@ -12,51 +11,82 @@ import {
   TableHead,
   TableRow,
 } from "@mui/material";
-import { Fragment, useState } from "react";
 import { convertToTime } from "../../assets/time";
 
-const BillComponent = ({ children, bill, tableId, orderId }) => {
-  const [open, setOpen] = useState(false);
-
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
-
+const BillComponent = ({
+  children,
+  bill,
+  tableId,
+  orderId,
+  isOpen,
+  setIsOpen,
+  setBill,
+}) => {
   const handleClose = () => {
-    setOpen(false);
+    setIsOpen(false);
   };
+
   const handleDeleteBill = async () => {
-    await fetch(`http://localhost:8080/admin/orders/${orderId}/bill`, {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      },
-    }).then((res) => alert("Xóa bill thành công"));
-  };
-  const handleAcceptPayment = async () => {
-    await fetch(
-      `http://localhost:8080/admin/tables/${tableId}/payment/accept`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
+    try {
+      const response = await fetch(
+        `http://localhost:8080/admin/orders/${orderId}/bill`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      if (response.ok) {
+        alert("Xóa bill thành công");
+        setBill(null); // Reset bill state
+        setIsOpen(false); // Close dialog on successful delete
+      } else {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to delete bill");
       }
-    ).then((res) => alert("Xác nhận thanh toán thành công"));
+    } catch (error) {
+      console.error("Error deleting bill:", error);
+      alert(error.message || "Xóa bill không thành công");
+    }
+  };
+
+  const handleAcceptPayment = async () => {
+    try {
+      const response = await fetch(
+        `http://localhost:8080/admin/tables/${tableId}/payment/accept`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      if (response.ok) {
+        alert("Xác nhận thanh toán thành công");
+        setIsOpen(false); // Close dialog on successful payment acceptance
+      } else {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to accept payment");
+      }
+    } catch (error) {
+      console.error("Error accepting payment:", error);
+      alert(error.message || "Xác nhận thanh toán không thành công");
+    }
   };
   return (
     <Fragment>
       <Button
         variant="outlined"
-        onClick={handleClickOpen}
+        onClick={() => setIsOpen(true)}
         disabled={bill === null}
       >
         {children}
       </Button>
       <Dialog
-        open={open}
+        open={isOpen}
         onClose={handleClose}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
@@ -81,8 +111,8 @@ const BillComponent = ({ children, bill, tableId, orderId }) => {
                 </TableHead>
                 <TableBody>
                   {bill &&
-                    bill?.billItemResponseDTOS?.length > 0 &&
-                    bill.billItemResponseDTOS.map((b, index) => (
+                    bill?.billItems?.length > 0 &&
+                    bill.billItems.map((b, index) => (
                       <TableRow key={index}>
                         <TableCell>{index + 1}</TableCell>
                         <TableCell>{b.billItemName}</TableCell>

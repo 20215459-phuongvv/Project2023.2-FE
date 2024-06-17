@@ -9,6 +9,7 @@ const Menu = () => {
   const [dishes, setDishes] = useState([]);
   const [menuId, setMenuId] = useState(0);
   const [orderId, setOrderId] = useState(0);
+
   useEffect(() => {
     fetch("http://localhost:8080/menus")
       .then((res) => res.json())
@@ -18,10 +19,12 @@ const Menu = () => {
         setMenuId(data[0].menuId);
       });
   }, []);
+
   const handleClick = (index) => {
     setDishes(menus[index].dishResponseDTO);
     setMenuId(menus[index].menuId);
   };
+
   useEffect(() => {
     if (tableId) {
       fetch(`http://localhost:8080/orders/tables/${tableId}`)
@@ -31,6 +34,7 @@ const Menu = () => {
         });
     }
   }, [tableId]);
+
   return (
     <Container className="flex flex-col items-center">
       <div className="flex justify-between w-[1200px] p-4 bg-slate-800">
@@ -44,13 +48,18 @@ const Menu = () => {
           </Button>
         ))}
       </div>
-      <div className="flex justify-end mt-4">
-        <Link
+      <div className="flex justify-end mt-4 w-full">
+        <Button
+          component={Link}
           to={`/cart/${tableId}`}
+          variant="contained"
+          color="primary"
           className="text-2xl font-semibold"
-        >{`Đến giỏ hàng >>>`}</Link>
+        >
+          Đến giỏ hàng
+        </Button>
       </div>
-      <div className="grid grid-cols-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-4 w-full">
         {dishes.map((dish) => (
           <MenuItem dish={dish} key={dish.dishId} orderId={orderId} />
         ))}

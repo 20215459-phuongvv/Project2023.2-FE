@@ -1,10 +1,12 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
-import { Box, Button, TextField } from "@mui/material";
+import { Box, Button, TextField, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@mui/material";
 import { useState } from "react";
 
 const FormTable = ({ setStatus, table }) => {
   const [tableName, setTableName] = useState(table?.tableName || "");
+  const [openDialog, setOpenDialog] = useState(false);
+
   const handleSubmitForm = async (e) => {
     e.preventDefault();
     const res = await fetch(
@@ -32,8 +34,8 @@ const FormTable = ({ setStatus, table }) => {
       alert(data.message);
     }
   };
-  const handleDeleteTable = async (e) => {
-    e.preventDefault();
+
+  const handleDeleteTable = async () => {
     const res = await fetch(
       `http://localhost:8080/admin/tables/${table.tableId}`,
       {
@@ -47,7 +49,17 @@ const FormTable = ({ setStatus, table }) => {
     );
     alert("Xóa bàn thành công");
     setStatus(true);
+    setOpenDialog(false);
   };
+
+  const handleOpenDialog = () => {
+    setOpenDialog(true);
+  };
+
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
+  };
+
   return (
     <div>
       <Box
@@ -75,7 +87,7 @@ const FormTable = ({ setStatus, table }) => {
               variant="contained"
               color="primary"
               sx={{ mt: 2, padding: "1rem" }}
-              onClick={handleDeleteTable}
+              onClick={handleOpenDialog}
             >
               Xóa
             </Button>
@@ -101,6 +113,27 @@ const FormTable = ({ setStatus, table }) => {
           </Button>
         )}
       </Box>
+      <Dialog
+        open={openDialog}
+        onClose={handleCloseDialog}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">
+          {"Bạn chắc chắn muốn xóa bàn chứ?"}
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            Hành động này sẽ không thể hoàn tác.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDialog}>Hủy</Button>
+          <Button onClick={handleDeleteTable} color="primary" autoFocus>
+            Xác nhận
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 };

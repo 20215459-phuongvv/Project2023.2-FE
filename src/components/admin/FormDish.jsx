@@ -8,6 +8,11 @@ import {
   MenuItem,
   Select,
   TextField,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
 } from "@mui/material";
 import { useEffect, useState } from "react";
 
@@ -22,7 +27,8 @@ const FormDish = ({ setStatus, dish }) => {
   });
   const [thumbnailPreview, setThumbnailPreview] = useState(null);
   const [menus, setMenus] = useState([]);
-  
+  const [openDialog, setOpenDialog] = useState(false);
+
   useEffect(() => {
     fetch("http://localhost:8080/menus", {
       method: "GET",
@@ -40,7 +46,7 @@ const FormDish = ({ setStatus, dish }) => {
         console.log(err);
       });
   }, []);
-  
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormValues({
@@ -57,7 +63,7 @@ const FormDish = ({ setStatus, dish }) => {
     });
     setThumbnailPreview(URL.createObjectURL(file));
   };
-  
+
   const handleChange = (e) => {
     console.log(typeof e.target.value);
     setFormValues({
@@ -108,8 +114,7 @@ const FormDish = ({ setStatus, dish }) => {
     }
   };
 
-  const handleDeleteDish = async (e) => {
-    e.preventDefault();
+  const handleDeleteDish = async () => {
     try {
       const response = await fetch(
         `http://localhost:8080/admin/dishes/${dish.dishId}`,
@@ -125,6 +130,15 @@ const FormDish = ({ setStatus, dish }) => {
     } catch (error) {
       console.error("There was an error!", error);
     }
+    setOpenDialog(false);
+  };
+
+  const handleOpenDialog = () => {
+    setOpenDialog(true);
+  };
+
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
   };
 
   return (
@@ -211,7 +225,7 @@ const FormDish = ({ setStatus, dish }) => {
             variant="contained"
             color="primary"
             className="flex-1"
-            onClick={handleDeleteDish}
+            onClick={handleOpenDialog}
           >
             Xóa
           </Button>
@@ -229,6 +243,27 @@ const FormDish = ({ setStatus, dish }) => {
           Tạo
         </Button>
       )}
+      <Dialog
+        open={openDialog}
+        onClose={handleCloseDialog}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">
+          {"Bạn chắc chắn muốn xóa món ăn chứ?"}
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            Hành động này sẽ không thể hoàn tác.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDialog}>Hủy</Button>
+          <Button onClick={handleDeleteDish} color="primary" autoFocus>
+            Xác nhận
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 };
