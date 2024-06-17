@@ -1,6 +1,8 @@
+import React, { useEffect, useState } from "react";
 import {
   Button,
   Container,
+  IconButton,
   Paper,
   Table,
   TableBody,
@@ -8,9 +10,14 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
 } from "@mui/material";
-import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
+import { convertToTime } from "../assets/time";
+import DeleteIcon from '@mui/icons-material/Delete';
 import $ from 'jquery';
 
 const Cart = () => {
@@ -19,6 +26,8 @@ const Cart = () => {
   const [orderItems, setOrderItems] = useState([]);
   const [orderId, setOrderId] = useState(0);
   const [hasOrder, setHasOrder] = useState(false);
+  const [bill, setBill] = useState(null);
+  const [isBillDialogOpen, setIsBillDialogOpen] = useState(false);
 
   useEffect(() => {
     if (params.tableId) {
@@ -116,7 +125,49 @@ const Cart = () => {
       .catch((err) => alert(err));
   };
 
+  const handleGetBill = () => {
+    fetch(`http://localhost:8080/orders/${orderId}/bill`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        setBill(data);
+        setIsBillDialogOpen(true);
+      })
+      .catch((error) => {
+        console.error("Error fetching bill:", error);
+        setBill(null);
+        setIsBillDialogOpen(false);
+      });
+  };
+
+  const handleDeleteItem = (id) => {
+    fetch(`http://localhost:8080/orders/${orderId}/items/${id}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => {
+        if (res.ok) {
+          setOrderItems(prevOrderItems => prevOrderItems.filter(item => item.orderItemId !== id));
+          alert("Xóa món ăn thành công");
+        } else {
+          alert("Xóa món ăn thất bại");
+        }
+      })
+      .catch((err) => alert(err));
+  };
+
+  const handleCloseBillDialog = () => {
+    setIsBillDialogOpen(false);
+  };
+
   const allItemsAreSelecting = orderItems.every(item => item.dishStatus === "Đang chọn");
+  const allItemsAreDone = orderItems.every(item => item.dishStatus === "Đã ra món");
 
   return (
     <Container>
@@ -152,6 +203,7 @@ const Cart = () => {
               <TableCell>Ghi chú</TableCell>
               <TableCell>Trạng thái</TableCell>
               <TableCell>Hỗ trợ món</TableCell>
+              <TableCell align="center">Xóa</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -178,6 +230,15 @@ const Cart = () => {
                       </Button>
                     )}
                   </TableCell>
+                  <TableCell align="center">
+                    <IconButton
+                      disabled={orderItem.dishStatus !== "Đang chọn"}
+                      onClick={() => handleDeleteItem(orderItem.orderItemId)}
+                      color="secondary"
+                    >
+                      <DeleteIcon />
+                    </IconButton>
+                  </TableCell>
                 </TableRow>
               ))}
           </TableBody>
@@ -187,7 +248,7 @@ const Cart = () => {
         <Button
           variant="contained"
           onClick={handleSendOrder}
-          disabled={orderItems.length === 0}
+          disabled={orderItems.length === 0 || allItemsAreDone}
         >
           Gửi order
         </Button>
@@ -198,7 +259,59 @@ const Cart = () => {
         >
           Yêu cầu thanh toán
         </Button>
+        <Button
+          variant="contained"
+          onClick={handleGetBill}
+          disabled={orderItems.length === 0 || allItemsAreSelecting}
+        >
+          Xem hóa đơn
+        </Button>
       </div>
+      {/* Bill Dialog */}
+      <Dialog open={isBillDialogOpen} onClose={handleCloseBillDialog}>
+        <DialogTitle>Hóa đơn</DialogTitle>
+        <DialogContent className="h-fit">
+        {bill && (
+            <div>
+              <Table
+                sx={{ minWidth: 500 }}
+                aria-label="simple table"
+                className="h-fit w-fit"
+              >
+                <TableHead>
+                  <TableRow>
+                    <TableCell align="center">STT</TableCell>
+                    <TableCell>Tên món ăn</TableCell>
+                    <TableCell>Đơn giá</TableCell>
+                    <TableCell align="center">Số lượng</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {bill &&
+                    bill?.billItemResponseDTOS?.length > 0 &&
+                    bill.billItemResponseDTOS.map((b, index) => (
+                      <TableRow key={index}>
+                        <TableCell align="center">{index + 1}</TableCell>
+                        <TableCell>{b.billItemName}</TableCell>
+                        <TableCell>{b.billItemPrice}</TableCell>
+                        <TableCell align="center">{b.billItemQuantity}</TableCell>
+                      </TableRow>
+                    ))}
+                </TableBody>
+              </Table>
+              <div className="m-2">Tổng số tiền: {bill.totalAmount}đ</div>
+              <div className="m-2">
+                Thời gian: {convertToTime(bill.billDateTime)}
+              </div>
+            </div>
+          )}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseBillDialog} variant="contained">
+            Đóng
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Container>
   );
 };

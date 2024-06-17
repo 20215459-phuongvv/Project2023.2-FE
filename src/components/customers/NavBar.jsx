@@ -7,12 +7,12 @@ const NavBar = () => {
   return (
     <div className="px-5 z-50 py-[.8rem] bg-[#e91e63]  lg:px-20 flex justify-between">
       <Link to="/" className="text-3xl font-semibold">
-        Home
+        Trang chủ
       </Link>
       <div className="flex gap-8 justify-center items-center">
-        <Link to="/search" className="text">
+        {/* <Link to="/search" className="text">
           <Search sx={{ fontSize: "30px" }} />
-        </Link>
+        </Link> */}
         <Link to="/login" className="text">
           <Avatar />
         </Link>

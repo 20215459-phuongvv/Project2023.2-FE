@@ -1,18 +1,16 @@
 /* eslint-disable react/prop-types */
-import {
-  Button,
-} from "@mui/material";
+import React, { useEffect, useState } from "react";
+import { Button } from "@mui/material";
 import NotificationComponent from "./NotificationComponent";
 import OrderComponent from "./OrderComponent";
 import BillComponent from "./BillComponent";
-import { useEffect, useState } from "react";
 
 const TableComponent = ({ table, setStatus }) => {
   const [order, setOrder] = useState({});
   const [bill, setBill] = useState(null);
   const [isBillDialogOpen, setIsBillDialogOpen] = useState(false);
 
-  // Function to fetch order details using Polling
+  // Function to fetch order details
   const fetchOrderDetails = () => {
     fetch(`http://localhost:8080/orders/tables/${table.tableId}`, {
       method: "GET",
@@ -22,11 +20,26 @@ const TableComponent = ({ table, setStatus }) => {
       },
     })
       .then((res) => res.json())
-      .then((data) => setOrder(data))
+      .then((data) => {
+        setOrder(data);
+        updateDoneDishCount(data.orderItemResponseDTO); // Update done dish count
+      })
       .catch((error) => console.error("Error fetching order:", error));
   };
 
-  // Function to fetch bill details using Polling
+  // Function to update done dish count based on orderItemResponseDTO
+  const updateDoneDishCount = (orderItems) => {
+    if (orderItems && orderItems.length > 0) {
+      const doneDishCount = orderItems.filter(
+        (item) => item.dishStatus === "Đã ra món"
+      ).length;
+      // Update table object with the new count
+      const updatedTable = { ...table, doneDish: doneDishCount };
+      setStatus(updatedTable); // Update parent component's state with updated table data
+    }
+  };
+
+  // Function to fetch bill details
   const fetchBillDetails = () => {
     try {
       if (order?.orderId) {
@@ -52,15 +65,15 @@ const TableComponent = ({ table, setStatus }) => {
   };
 
   useEffect(() => {
-    // Initial fetch
+    // Initial fetch of order and bill details
     fetchOrderDetails();
     fetchBillDetails();
 
-    // Polling interval
-    const orderPollInterval = setInterval(fetchOrderDetails, 5000); // Poll every 5 seconds
-    const billPollInterval = setInterval(fetchBillDetails, 5000); // Poll every 5 seconds
+    // Polling intervals to fetch updated data every 5 seconds
+    const orderPollInterval = setInterval(fetchOrderDetails, 5000);
+    const billPollInterval = setInterval(fetchBillDetails, 5000);
 
-    // Clear intervals on component unmount
+    // Cleanup intervals on component unmount
     return () => {
       clearInterval(orderPollInterval);
       clearInterval(billPollInterval);
@@ -68,45 +81,72 @@ const TableComponent = ({ table, setStatus }) => {
   }, [table.tableId]); // Only re-run effect if tableId changes
 
   const handleMakeTableEmpty = async () => {
-    await fetch(`http://localhost:8080/admin/tables/${table.tableId}/status`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      },
-    })
-      .then((req) => req.json())
-      .then((data) => {
-        if (data.tableId) {
-          alert("Làm trống bàn thành công");
+    try {
+      const response = await fetch(
+        `http://localhost:8080/admin/tables/${table.tableId}/status`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
         }
-      })
-      .catch((error) => {
-        console.error("Error making table empty:", error);
-      });
+      );
+      const data = await response.json();
+      if (data.tableId) {
+        alert("Làm trống bàn thành công");
+      }
+    } catch (error) {
+      console.error("Error making table empty:", error);
+    }
   };
 
   const handleCreateBill = async () => {
-    await fetch(`http://localhost:8080/admin/orders/${order.orderId}/bill`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      },
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.message) {
-          alert(data.message);
-        } else {
-          setBill(data);
-          setIsBillDialogOpen(true); // Open the bill dialog
+    try {
+      const response = await fetch(
+        `http://localhost:8080/admin/orders/${order.orderId}/bill`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
         }
-      })
-      .catch((error) => {
-        alert(error.message);
-      });
+      );
+      const data = await response.json();
+      if (data.message) {
+        alert(data.message);
+      } else {
+        setBill(data);
+        setIsBillDialogOpen(true); // Open the bill dialog
+      }
+    } catch (error) {
+      alert("Error creating bill:", error.message);
+    }
+  };
+
+  const handleUpdateOrderItemStatus = async (id) => {
+    try {
+      const response = await fetch(
+        `http://localhost:8080/admin/orders/${order.orderId}/items/${id}/status`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      if (response.ok) {
+        // If update successful, fetch order details again to update UI
+        fetchOrderDetails();
+      } else {
+        console.error("Failed to update order item status");
+      }
+    } catch (error) {
+      console.error("Error updating order item status:", error);
+    }
   };
 
   return (
@@ -118,7 +158,7 @@ const TableComponent = ({ table, setStatus }) => {
           <div className="flex gap-4 items-center">
             <Button
               onClick={handleCreateBill}
-              variant="outlined"
+              variant="contained"
               disabled={bill !== null}
             >
               Tạo bill
@@ -136,7 +176,7 @@ const TableComponent = ({ table, setStatus }) => {
           </div>
         )}
         {table.tableStatus === "Đã thanh toán" && (
-          <Button variant="outlined" onClick={handleMakeTableEmpty}>
+          <Button variant="contained" onClick={handleMakeTableEmpty}>
             Làm trống bàn
           </Button>
         )}
@@ -144,7 +184,10 @@ const TableComponent = ({ table, setStatus }) => {
       <p className="flex gap-2 items-center">
         Số món đã lên: {`${table.doneDish}/${table.totalDish}`}
         {table.totalDish > 0 && (
-          <OrderComponent tableId={table.tableId}>
+          <OrderComponent
+            tableId={table.tableId}
+            handleUpdateOrderItemStatus={handleUpdateOrderItemStatus} // Pass function to OrderComponent
+          >
             <Button>Chi tiết</Button>
           </OrderComponent>
         )}
@@ -153,14 +196,9 @@ const TableComponent = ({ table, setStatus }) => {
       <p className="flex gap-2 items-center">
         Số thông báo: {table.notificationNumber}
         {table.notificationNumber > 0 && (
-          <>
-            <NotificationComponent
-              tableId={table.tableId}
-              setStatus={setStatus}
-            >
-              <Button>Chi tiết</Button>
-            </NotificationComponent>
-          </>
+          <NotificationComponent tableId={table.tableId} setStatus={setStatus}>
+            <Button>Chi tiết</Button>
+          </NotificationComponent>
         )}
       </p>
     </div>

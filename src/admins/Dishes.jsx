@@ -12,6 +12,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import { useEffect, useState } from "react";
 import AlertDialog from "../components/DialogComponent";
 import FormDish from "../components/admin/FormDish";
+import PrivateMessageAlert from "../components/admin/PrivateMessageAlert";
 
 const Dish = () => {
   const [dishes, setDishes] = useState([]);
@@ -29,6 +30,7 @@ const Dish = () => {
   console.log(dishes);
   return (
     <div>
+      <PrivateMessageAlert />
       <div className="text-xl font-semibold my-4 flex justify-between">
         <h2>Danh sách món ăn</h2>
         <AlertDialog

@@ -10,8 +10,10 @@ import {
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import { useEffect, useState } from "react";
+import React from 'react';
 import AlertDialog from "../components/DialogComponent";
 import FormMenu from "../components/admin/FormMenu";
+import PrivateMessageAlert from "../components/admin/PrivateMessageAlert";
 
 const Menu = () => {
   const [menus, setMenus] = useState([]);
@@ -39,6 +41,7 @@ const Menu = () => {
   }, [status]);
   return (
     <div>
+      <PrivateMessageAlert />
       <div className="text-xl font-semibold my-4 flex justify-between">
         <h2>Danh sách thực đơn</h2>
         <AlertDialog

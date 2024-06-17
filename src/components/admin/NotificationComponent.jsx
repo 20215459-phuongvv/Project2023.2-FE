@@ -58,9 +58,10 @@ const NotificationComponent = ({ children, tableId, setStatus }) => {
           <div className="flex flex-col">
             {notifications.map((notification, index) => (
               <div
-                className="flex gap-2 min-w-[400px] justify-between"
+                className="flex gap-2 min-w-[570px] justify-between"
                 key={index}
               >
+                <span>{index + 1}.</span>
                 <span>{notification.text}</span>
                 <span>{convertToTime(notification.notificationTime)}</span>
               </div>
@@ -68,7 +69,7 @@ const NotificationComponent = ({ children, tableId, setStatus }) => {
           </div>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose}>Hủy</Button>
+          <Button onClick={handleClose}>Đóng</Button>
           <Button onClick={handleDeteleAll} autoFocus>
             Xác nhận
           </Button>

@@ -6,7 +6,8 @@ import {
   DialogTitle,
 } from "@mui/material";
 import { useState } from "react";
-
+import React from 'react';
+import PrivateMessageAlert from "../components/admin/PrivateMessageAlert";
 const Logout = () => {
   const [open, setOpen] = useState(false);
 
@@ -23,6 +24,7 @@ const Logout = () => {
   };
   return (
     <div className="w-full h-[calc(100vh_-_100px)] flex justify-center items-center">
+      <PrivateMessageAlert />
       <div className="flex flex-col items-center gap-3">
         <h2 className="text-xl">Admin</h2>
         <h3 className="text-lg">admin@gmail.com</h3>

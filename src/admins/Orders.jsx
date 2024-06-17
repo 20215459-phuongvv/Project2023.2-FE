@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import TableComponent from "../components/admin/TableComponent";
 import { Button } from "@mui/material";
-
+import React from "react";
+import PrivateMessageAlert from "../components/admin/PrivateMessageAlert";
 const Order = () => {
   // eslint-disable-next-line no-unused-vars
   const [data, setData] = useState([]);
@@ -45,6 +46,7 @@ const Order = () => {
 
   return (
     <div className="h-full">
+      <PrivateMessageAlert />
       <div className="flex justify-between p-4 bg-slate-800">
         <Button
           variant={tableStatus === "Đang order" ? "contained" : "outlined"}

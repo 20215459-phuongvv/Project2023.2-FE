@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const LoginForm = () => {
-  const [values, setValues] = useState({ email: "", password: "" });
+  const [values, setValues] = useState({ username: "", password: "" });
   const [errorMessage, setErrorMessage] = useState("");
   const navigate = useNavigate();
 
@@ -22,7 +22,7 @@ const LoginForm = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          email: values.email,
+          username: values.username,
           password: values.password,
         }),
       });
@@ -57,13 +57,13 @@ const LoginForm = () => {
               margin="normal"
               required
               fullWidth
-              id="email"
+              id="username"
               label="Tên đăng nhập"
-              name="email"
-              autoComplete="email"
+              name="username"
+              autoComplete="username"
               autoFocus
-              value={values.email}
-              onChange={(e) => setValues({ ...values, email: e.target.value })}
+              value={values.username}
+              onChange={(e) => setValues({ ...values, username: e.target.value })}
             />
             <TextField
               margin="normal"

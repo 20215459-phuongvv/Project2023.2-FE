@@ -91,22 +91,21 @@ const BillComponent = ({
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
-        <DialogTitle id="alert-dialog-title">{"Tạo bill"}</DialogTitle>
+        <DialogTitle id="alert-dialog-title">{"Hóa đơn"}</DialogTitle>
         <DialogContent className="h-fit">
           {bill && (
             <div>
               <Table
-                sx={{ minWidth: 650 }}
+                sx={{ minWidth: 500 }}
                 aria-label="simple table"
                 className="h-fit w-fit"
               >
                 <TableHead>
                   <TableRow>
-                    <TableCell>STT</TableCell>
+                    <TableCell align="center">STT</TableCell>
                     <TableCell>Tên</TableCell>
                     <TableCell>Giá</TableCell>
-                    <TableCell>Số lượng</TableCell>
-                    <TableCell></TableCell>
+                    <TableCell align="center">Số lượng</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -114,10 +113,10 @@ const BillComponent = ({
                     bill?.billItems?.length > 0 &&
                     bill.billItems.map((b, index) => (
                       <TableRow key={index}>
-                        <TableCell>{index + 1}</TableCell>
+                        <TableCell align="center">{index + 1}</TableCell>
                         <TableCell>{b.billItemName}</TableCell>
                         <TableCell>{b.billItemPrice}</TableCell>
-                        <TableCell>{b.billItemQuantity}</TableCell>
+                        <TableCell align="center">{b.billItemQuantity}</TableCell>
                       </TableRow>
                     ))}
                 </TableBody>
@@ -130,8 +129,8 @@ const BillComponent = ({
           )}
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose}>Hủy</Button>
-          <Button onClick={handleDeleteBill} autoFocus variant="outlined">
+          <Button onClick={handleClose} variant="contained">Đóng</Button>
+          <Button onClick={handleDeleteBill} autoFocus variant="contained">
             Xóa bill
           </Button>
           <Button onClick={handleAcceptPayment} autoFocus variant="contained">

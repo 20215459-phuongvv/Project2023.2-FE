@@ -4,6 +4,8 @@ import EditIcon from "@mui/icons-material/Edit";
 import { useEffect, useState } from "react";
 import AlertDialog from "../components/DialogComponent";
 import FormTable from "../components/admin/FormTable";
+import React from "react";
+import PrivateMessageAlert from "../components/admin/PrivateMessageAlert";
 const Tables = () => {
   const [tables, setTables] = useState([]);
   const [status, setStatus] = useState(true);
@@ -24,11 +26,12 @@ const Tables = () => {
   }, [status]);
   return (
     <div>
+      <PrivateMessageAlert />
       <div className="text-xl font-semibold my-4 flex justify-between">
         <h2>Danh sách bàn</h2>
         <AlertDialog
           component={<FormTable setStatus={setStatus} />}
-          title="Thêm bàn?"
+          title="Thêm bàn"
         >
           <Fab color="secondary" aria-label="edit">
             <EditIcon />
@@ -42,7 +45,7 @@ const Tables = () => {
               className="p-4 flex justify-center items-center bg-slate-300 text-black"
               key={table.tableId}
               component={<FormTable setStatus={setStatus} table={table} />}
-              title="Thêm bàn?"
+              title="Cập nhật bàn"
             >
               <Button
                 variant="contained"

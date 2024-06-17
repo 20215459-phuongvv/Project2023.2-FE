@@ -7,10 +7,12 @@ import {
   TableHead,
   TableRow,
 } from "@mui/material";
-
+import React from 'react';
+import PrivateMessageAlert from "../components/admin/PrivateMessageAlert";
 const DashBoard = () => {
   return (
     <div>
+      <PrivateMessageAlert />
       <h2 className="text-xl font-semibold my-4">Danh sách đơn hàng</h2>
       <TableContainer component={Paper}>
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
