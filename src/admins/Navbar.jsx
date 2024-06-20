@@ -119,7 +119,7 @@ export default function Navbar({ children }) {
             noWrap
             sx={{ flexGrow: 1 }}
           >
-            {!menu ? "Dashboard" : Label[menu]}
+            {!menu ? "Quản lý đơn hàng" : Label[menu]}
           </Typography>
         </Toolbar>
       </AppBar>

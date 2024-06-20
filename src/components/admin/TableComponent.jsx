@@ -8,6 +8,7 @@ import BillComponent from "./BillComponent";
 const TableComponent = ({ table, setStatus }) => {
   const [order, setOrder] = useState({});
   const [bill, setBill] = useState(null);
+  const [isBillCreated, setIsBillCreated] = useState(false);
   const [isBillDialogOpen, setIsBillDialogOpen] = useState(false);
 
   // Function to fetch order details
@@ -52,14 +53,17 @@ const TableComponent = ({ table, setStatus }) => {
           .then((res) => res.json())
           .then((data) => {
             setBill(data?.message ? null : data);
+            setIsBillCreated(data?.message ? false : true); // Update isBillCreated based on response
           })
           .catch((error) => {
             setBill(null);
+            setIsBillCreated(false); // Update isBillCreated on error
             console.error("Error fetching bill:", error);
           });
       }
     } catch (error) {
       setBill(null);
+      setIsBillCreated(false); // Update isBillCreated on error
       console.error("Error fetching bill:", error);
     }
   };
@@ -119,6 +123,7 @@ const TableComponent = ({ table, setStatus }) => {
         alert(data.message);
       } else {
         setBill(data);
+        setIsBillCreated(true); // Update isBillCreated on successful bill creation
         setIsBillDialogOpen(true); // Open the bill dialog
       }
     } catch (error) {
@@ -149,6 +154,10 @@ const TableComponent = ({ table, setStatus }) => {
     }
   };
 
+  const handleBillDeleted = () => {
+    setIsBillCreated(false);
+  };
+
   return (
     <div className="m-2 border">
       <p>Tên: {table.tableName}</p>
@@ -159,7 +168,7 @@ const TableComponent = ({ table, setStatus }) => {
             <Button
               onClick={handleCreateBill}
               variant="contained"
-              disabled={bill !== null}
+              disabled={isBillCreated} // Disable button if bill is already created
             >
               Tạo bill
             </Button>
@@ -170,6 +179,7 @@ const TableComponent = ({ table, setStatus }) => {
               isOpen={isBillDialogOpen}
               setIsOpen={setIsBillDialogOpen}
               setBill={setBill}
+              onBillDeleted={handleBillDeleted} // Pass the callback to BillComponent
             >
               Xem bill
             </BillComponent>

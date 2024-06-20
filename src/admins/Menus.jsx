@@ -9,6 +9,7 @@ import {
   TableRow,
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
+import AddIcon from "@mui/icons-material/Add";
 import { useEffect, useState } from "react";
 import AlertDialog from "../components/DialogComponent";
 import FormMenu from "../components/admin/FormMenu";
@@ -48,7 +49,7 @@ const Menu = () => {
           title="Thêm danh mục"
         >
           <Fab color="secondary" aria-label="edit">
-            <EditIcon />
+            <AddIcon />
           </Fab>
         </AlertDialog>
       </div>

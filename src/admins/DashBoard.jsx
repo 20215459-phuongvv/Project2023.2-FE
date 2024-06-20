@@ -72,24 +72,24 @@ const DashBoard = () => {
           <Table sx={{ minWidth: 650 }} aria-label="simple table">
             <TableHead>
               <TableRow>
-                <TableCell>Id</TableCell>
-                <TableCell>Thời gian</TableCell>
-                <TableCell>Bàn</TableCell>
-                <TableCell>Số lượng</TableCell>
-                <TableCell>Trạng thái</TableCell>
-                <TableCell>Xem bill</TableCell>
+                <TableCell align="center">Mã đơn hàng</TableCell>
+                <TableCell align="center">Thời gian</TableCell>
+                <TableCell align="center">Bàn</TableCell>
+                <TableCell align="center">Số lượng món ăn</TableCell>
+                <TableCell align="center">Trạng thái</TableCell>
+                <TableCell align="center">Xem bill</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {orders.length > 0 &&
                 orders.map((order) => (
                   <TableRow key={order.orderId}>
-                    <TableCell>{order.orderId}</TableCell>
-                    <TableCell>{convertToTime(order.orderTime)}</TableCell>
-                    <TableCell>{order.tableName}</TableCell>
-                    <TableCell>{order?.orderItemResponseDTO?.length}</TableCell>
-                    <TableCell>{order.orderStatus}</TableCell>
-                    <TableCell>
+                    <TableCell align="center">{order.orderId}</TableCell>
+                    <TableCell align="center">{convertToTime(order.orderTime)}</TableCell>
+                    <TableCell align="center">{order.tableName}</TableCell>
+                    <TableCell align="center">{order?.orderItemResponseDTO?.length}</TableCell>
+                    <TableCell align="center">{order.orderStatus}</TableCell>
+                    <TableCell align="center">
                       <Button
                         variant="outlined"
                         onClick={() => handleClickOpen(order.orderId)}

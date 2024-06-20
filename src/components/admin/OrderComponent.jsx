@@ -170,53 +170,56 @@ const OrderComponent = ({ tableId, children }) => {
             <p>Trạng thái</p>
             <p className="text-center">Ra món</p>
           </div>
-          {orders.orderItemResponseDTO.map((order) => (
-            <div
-              key={order.orderItemId}
-              className="grid grid-cols-5 gap-4 justify-between items-center my-2"
-            >
-              <p>{order.dishName}</p>
-              <p className="text-center">
-                <ButtonGroup variant="outlined" aria-label="Basic button group">
-                  <Button
-                    onClick={() =>
-                      handleUpdateQuantity(
-                        order.orderItemId,
-                        order.dishQuantity,
-                        -1
-                      )
-                    }
-                  >
-                    <RemoveIcon />
-                  </Button>
-                  <Button>{order.dishQuantity}</Button>
-                  <Button
-                    onClick={() =>
-                      handleUpdateQuantity(
-                        order.orderItemId,
-                        order.dishQuantity,
-                        1
-                      )
-                    }
-                  >
-                    <AddIcon />
-                  </Button>
-                </ButtonGroup>
-              </p>
-              <p>{order.dishNote}</p>
-              <p>{order.dishStatus}</p>
-              <Button
-                variant="contained"
-                disabled={
-                  order.dishStatus === "Đã ra món" ||
-                  order.dishStatus === "Đang chọn"
-                }
-                onClick={() => handleUpdate(order.orderItemId)}
+          {orders && orders.orderItemResponseDTO ? (
+            orders.orderItemResponseDTO.map((order)=> (
+              <div
+                key={order.orderItemId}
+                className="grid grid-cols-5 gap-4 justify-between items-center my-2"
               >
-                Ra món
-              </Button>
-            </div>
-          ))}
+                <p>{order.dishName}</p>
+                <p className="text-center">
+                  <ButtonGroup variant="outlined" aria-label="Basic button group">
+                    <Button
+                      onClick={() =>
+                        handleUpdateQuantity(
+                          order.orderItemId,
+                          order.dishQuantity,
+                          -1
+                        )
+                      }
+                    >
+                      <RemoveIcon />
+                    </Button>
+                    <Button>{order.dishQuantity}</Button>
+                    <Button
+                      onClick={() =>
+                        handleUpdateQuantity(
+                          order.orderItemId,
+                          order.dishQuantity,
+                          1
+                        )
+                      }
+                    >
+                      <AddIcon />
+                    </Button>
+                  </ButtonGroup>
+                </p>
+                <p>{order.dishNote}</p>
+                <p>{order.dishStatus}</p>
+                <Button
+                  variant="contained"
+                  disabled={
+                    order.dishStatus === "Đã ra món" ||
+                    order.dishStatus === "Đang chọn"
+                  }
+                  onClick={() => handleUpdate(order.orderItemId)}
+                >
+                  Ra món
+                </Button>
+              </div>
+            ))) : (
+              <p>Không có order nào được tìm thấy.</p>
+            )}
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Đóng</Button>

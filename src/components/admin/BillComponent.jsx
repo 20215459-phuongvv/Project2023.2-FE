@@ -1,4 +1,5 @@
-import React, { Fragment, useEffect } from "react";
+/* eslint-disable react/prop-types */
+import React, { Fragment } from "react";
 import {
   Button,
   Dialog,
@@ -21,6 +22,7 @@ const BillComponent = ({
   isOpen,
   setIsOpen,
   setBill,
+  onBillDeleted, // Add this prop
 }) => {
   const handleClose = () => {
     setIsOpen(false);
@@ -42,6 +44,7 @@ const BillComponent = ({
         alert("Xóa bill thành công");
         setBill(null); // Reset bill state
         setIsOpen(false); // Close dialog on successful delete
+        onBillDeleted(); // Call callback to update TableComponent state
       } else {
         const errorData = await response.json();
         throw new Error(errorData.message || "Failed to delete bill");
@@ -76,6 +79,7 @@ const BillComponent = ({
       alert(error.message || "Xác nhận thanh toán không thành công");
     }
   };
+
   return (
     <Fragment>
       <Button

@@ -9,6 +9,7 @@ import {
   TableRow,
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
+import AddIcon from "@mui/icons-material/Add";
 import { useEffect, useState } from "react";
 import AlertDialog from "../components/DialogComponent";
 import FormDish from "../components/admin/FormDish";
@@ -38,7 +39,7 @@ const Dish = () => {
           component={<FormDish setStatus={setStatus} />}
         >
           <Fab color="secondary" aria-label="edit">
-            <EditIcon />
+            <AddIcon />
           </Fab>
         </AlertDialog>
       </div>

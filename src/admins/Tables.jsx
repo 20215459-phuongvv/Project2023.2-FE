@@ -1,6 +1,7 @@
 /* eslint-disable no-unused-vars */
 import { Button, Fab } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
+import AddIcon from "@mui/icons-material/Add";
 import { useEffect, useState } from "react";
 import AlertDialog from "../components/DialogComponent";
 import FormTable from "../components/admin/FormTable";
@@ -34,7 +35,7 @@ const Tables = () => {
           title="Thêm bàn"
         >
           <Fab color="secondary" aria-label="edit">
-            <EditIcon />
+            <AddIcon />
           </Fab>
         </AlertDialog>
       </div>

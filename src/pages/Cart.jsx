@@ -33,34 +33,53 @@ const Cart = () => {
   const [isBillDialogOpen, setIsBillDialogOpen] = useState(false);
 
   useEffect(() => {
-    if (params.tableId) {
-      fetch(`http://localhost:8080/orders/tables/${params.tableId}`)
-        .then((res) => {
-          if (res.status === 500) {
-            throw new Error("No order found");
-          }
-          return res.json();
-        })
-        .then((data) => {
-          setOrderItems(
-            data?.orderItemResponseDTO ? data?.orderItemResponseDTO : []
-          );
-          setOrderId(data?.orderId ? data?.orderId : 0);
-          setHasOrder(true);
-        })
-        .catch(() => {
-          setHasOrder(false);
-          console.log("Bàn trống");
-        });
-    }
+    let intervalId;
+  
+    const fetchData = () => {
+      if (params.tableId) {
+        fetch(`http://localhost:8080/orders/tables/${params.tableId}`)
+          .then((res) => {
+            if (res.status === 500) {
+              throw new Error("No order found");
+            }
+            return res.json();
+          })
+          .then((data) => {
+            setOrderItems(data?.orderItemResponseDTO ? data?.orderItemResponseDTO : []);
+            setOrderId(data?.orderId ? data?.orderId : 0);
+            setHasOrder(true);
+          })
+          .catch(() => {
+            setOrderItems([]);
+            setOrderId(0);
+            setHasOrder(false);
+            console.log("Bàn trống");
+          });
+      }
+    };
+  
+    const startInterval = () => {
+      intervalId = setInterval(fetchData, 5000); // Fetch every 5 seconds
+    };
+  
+    const stopInterval = () => {
+      clearInterval(intervalId);
+    };
+  
+    fetchData();
+  
+    startInterval(); 
+  
+    return () => {
+      stopInterval();
+    };
   }, [params.tableId]);
 
   useEffect(() => {
-    const poll = () => {
-      $.ajax({
-        url: "http://localhost:8080/orders/updates",
-        method: "GET",
-        success: (updatedOrder) => {
+    const fetchOrderUpdates = () => {
+      fetch("http://localhost:8080/orders/updates")
+        .then((res) => res.json())
+        .then((updatedOrder) => {
           if (updatedOrder) {
             setOrderItems((prevOrderItems) =>
               prevOrderItems.map((item) =>
@@ -70,14 +89,15 @@ const Cart = () => {
               )
             );
           }
-          poll();
-        },
-        error: () => {
-          setTimeout(poll, 5000); // Retry after 5 seconds on error
-        },
-      });
+        })
+        .catch((error) => {
+          console.error("Error fetching order updates:", error);
+        });
     };
-    poll();
+  
+    const intervalId = setInterval(fetchOrderUpdates, 5000); // Fetch every 5 seconds
+  
+    return () => clearInterval(intervalId); // Cleanup on component unmount
   }, []);
 
   const handleCreateOrder = async () => {
@@ -141,17 +161,29 @@ const Cart = () => {
         "Content-Type": "application/json",
       },
     })
-      .then((res) => res.json())
+      .then((res) => {
+        if (!res.ok) {
+          if (res.status === 500) {
+            throw new Error("Đơn hàng này chưa có hóa đơn");
+          } else {
+            throw new Error("Lỗi không xác định");
+          }
+        }
+        return res.json();
+      })
       .then((data) => {
         setBill(data);
         setIsBillDialogOpen(true);
       })
       .catch((error) => {
         console.error("Error fetching bill:", error);
+        if (error.message === "Đơn hàng này chưa có hóa đơn") {
+          alert("Đơn hàng này chưa có hóa đơn");
+        }
         setBill(null);
         setIsBillDialogOpen(false);
       });
-  };
+  };  
 
   const handleDeleteItem = (id) => {
     fetch(`http://localhost:8080/orders/${orderId}/items/${id}`, {
