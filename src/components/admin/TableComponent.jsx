@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@mui/material";
 import NotificationComponent from "./NotificationComponent";
 import OrderComponent from "./OrderComponent";

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Button,
   Container,
@@ -14,11 +14,14 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
+  ButtonGroup,
 } from "@mui/material";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { convertToTime } from "../assets/time";
-import DeleteIcon from '@mui/icons-material/Delete';
-import $ from 'jquery';
+import DeleteIcon from "@mui/icons-material/Delete";
+import AddIcon from "@mui/icons-material/Add";
+import RemoveIcon from "@mui/icons-material/Remove";
+import $ from "jquery";
 
 const Cart = () => {
   const params = useParams();
@@ -39,7 +42,9 @@ const Cart = () => {
           return res.json();
         })
         .then((data) => {
-          setOrderItems(data?.orderItemResponseDTO ? data?.orderItemResponseDTO : []);
+          setOrderItems(
+            data?.orderItemResponseDTO ? data?.orderItemResponseDTO : []
+          );
           setOrderId(data?.orderId ? data?.orderId : 0);
           setHasOrder(true);
         })
@@ -53,19 +58,23 @@ const Cart = () => {
   useEffect(() => {
     const poll = () => {
       $.ajax({
-        url: 'http://localhost:8080/orders/updates',
-        method: 'GET',
+        url: "http://localhost:8080/orders/updates",
+        method: "GET",
         success: (updatedOrder) => {
           if (updatedOrder) {
-            setOrderItems(prevOrderItems => prevOrderItems.map(item =>
-              item.orderItemId === updatedOrder.orderItemId ? updatedOrder : item
-            ));
+            setOrderItems((prevOrderItems) =>
+              prevOrderItems.map((item) =>
+                item.orderItemId === updatedOrder.orderItemId
+                  ? updatedOrder
+                  : item
+              )
+            );
           }
           poll();
         },
         error: () => {
           setTimeout(poll, 5000); // Retry after 5 seconds on error
-        }
+        },
       });
     };
     poll();
@@ -93,8 +102,8 @@ const Cart = () => {
       .then((data) => {
         if (data.orderId) {
           alert("Gửi order thành công");
-          setOrderItems(prevOrderItems =>
-            prevOrderItems.map(item => ({
+          setOrderItems((prevOrderItems) =>
+            prevOrderItems.map((item) => ({
               ...item,
               dishStatus: "Đang ra món",
             }))
@@ -153,7 +162,9 @@ const Cart = () => {
     })
       .then((res) => {
         if (res.ok) {
-          setOrderItems(prevOrderItems => prevOrderItems.filter(item => item.orderItemId !== id));
+          setOrderItems((prevOrderItems) =>
+            prevOrderItems.filter((item) => item.orderItemId !== id)
+          );
           alert("Xóa món ăn thành công");
         } else {
           alert("Xóa món ăn thất bại");
@@ -166,8 +177,57 @@ const Cart = () => {
     setIsBillDialogOpen(false);
   };
 
-  const allItemsAreSelecting = orderItems.every(item => item.dishStatus === "Đang chọn");
-  const allItemsAreDone = orderItems.every(item => item.dishStatus === "Đã ra món");
+  const allItemsAreSelecting = orderItems.every(
+    (item) => item.dishStatus === "Đang chọn"
+  );
+  const allItemsAreDone = orderItems.every(
+    (item) => item.dishStatus === "Đã ra món"
+  );
+
+  const handleUpdateQuantity = async (orderItemId, quantity, number) => {
+    if (quantity + number > 0) {
+      await fetch(
+        `http://localhost:8080/orders/${orderId}/items/${orderItemId}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            dishQuantity: quantity + number,
+          }),
+        }
+      )
+        .then((res) => res.json())
+        .then((data) => {
+          setOrderItems((prevOrderItems) =>
+            prevOrderItems.map((item) =>
+              item.orderItemId === data.orderItemId ? data : item
+            )
+          );
+        })
+        .catch((err) => alert(err));
+
+      await fetch(`http://localhost:8080/orders/tables/${params.tableId}`)
+        .then((res) => {
+          if (res.status === 500) {
+            throw new Error("No order found");
+          }
+          return res.json();
+        })
+        .then((data) => {
+          setOrderItems(
+            data?.orderItemResponseDTO ? data?.orderItemResponseDTO : []
+          );
+          setOrderId(data?.orderId ? data?.orderId : 0);
+          setHasOrder(true);
+        })
+        .catch(() => {
+          setHasOrder(false);
+          console.log("Bàn trống");
+        });
+    }
+  };
 
   return (
     <Container>
@@ -216,7 +276,37 @@ const Cart = () => {
                   <TableCell component="th" scope="row">
                     {orderItem.dishName}
                   </TableCell>
-                  <TableCell align="center">{orderItem.dishQuantity}</TableCell>
+                  <TableCell align="center">
+                    <ButtonGroup
+                      variant="outlined"
+                      aria-label="Basic button group"
+                      disabled={orderItem.dishStatus !== "Đang chọn"}
+                    >
+                      <Button
+                        onClick={() =>
+                          handleUpdateQuantity(
+                            orderItem.orderItemId,
+                            orderItem.dishQuantity,
+                            -1
+                          )
+                        }
+                      >
+                        <RemoveIcon />
+                      </Button>
+                      <Button>{orderItem.dishQuantity}</Button>
+                      <Button
+                        onClick={() =>
+                          handleUpdateQuantity(
+                            orderItem.orderItemId,
+                            orderItem.dishQuantity,
+                            1
+                          )
+                        }
+                      >
+                        <AddIcon />
+                      </Button>
+                    </ButtonGroup>
+                  </TableCell>
                   <TableCell>{orderItem.customPrice}</TableCell>
                   <TableCell>{orderItem.dishNote}</TableCell>
                   <TableCell>{orderItem.dishStatus}</TableCell>
@@ -271,7 +361,7 @@ const Cart = () => {
       <Dialog open={isBillDialogOpen} onClose={handleCloseBillDialog}>
         <DialogTitle>Hóa đơn</DialogTitle>
         <DialogContent className="h-fit">
-        {bill && (
+          {bill && (
             <div>
               <Table
                 sx={{ minWidth: 500 }}
@@ -294,7 +384,9 @@ const Cart = () => {
                         <TableCell align="center">{index + 1}</TableCell>
                         <TableCell>{b.billItemName}</TableCell>
                         <TableCell>{b.billItemPrice}</TableCell>
-                        <TableCell align="center">{b.billItemQuantity}</TableCell>
+                        <TableCell align="center">
+                          {b.billItemQuantity}
+                        </TableCell>
                       </TableRow>
                     ))}
                 </TableBody>

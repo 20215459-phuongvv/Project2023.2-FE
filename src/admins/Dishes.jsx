@@ -55,33 +55,34 @@ const Dish = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {dishes.map((dish, index) => (
-              <TableRow key={index}>
-                <TableCell>{index + 1}</TableCell>
-                <TableCell>
-                  <img
-                    src={dish.thumbnail}
-                    alt={dish.dishName}
-                    style={{ width: 50, height: 50, objectFit: "cover" }}
-                  />
-                </TableCell>
-                <TableCell>{dish.dishName}</TableCell>
-                <TableCell>{dish.dishPrice}</TableCell>
-                <TableCell>
-                  {dish.dishStatus == 1 ? "Còn món" : "Hết món"}
-                </TableCell>
-                <TableCell>
-                  <AlertDialog
-                    title="Cập nhật"
-                    component={<FormDish setStatus={setStatus} dish={dish} />}
-                  >
-                    <Fab color="error" aria-label="edit">
-                      <EditIcon />
-                    </Fab>
-                  </AlertDialog>
-                </TableCell>
-              </TableRow>
-            ))}
+            {dishes.length > 0 &&
+              dishes.map((dish, index) => (
+                <TableRow key={index}>
+                  <TableCell>{index + 1}</TableCell>
+                  <TableCell>
+                    <img
+                      src={dish.thumbnail}
+                      alt={dish.dishName}
+                      style={{ width: 50, height: 50, objectFit: "cover" }}
+                    />
+                  </TableCell>
+                  <TableCell>{dish.dishName}</TableCell>
+                  <TableCell>{dish.dishPrice}</TableCell>
+                  <TableCell>
+                    {dish.dishStatus == 1 ? "Còn món" : "Hết món"}
+                  </TableCell>
+                  <TableCell>
+                    <AlertDialog
+                      title="Cập nhật"
+                      component={<FormDish setStatus={setStatus} dish={dish} />}
+                    >
+                      <Fab color="error" aria-label="edit">
+                        <EditIcon />
+                      </Fab>
+                    </AlertDialog>
+                  </TableCell>
+                </TableRow>
+              ))}
           </TableBody>
         </Table>
       </TableContainer>

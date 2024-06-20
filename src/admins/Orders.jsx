@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import TableComponent from "../components/admin/TableComponent";
 import { Button } from "@mui/material";
-import React from "react";
 import PrivateMessageAlert from "../components/admin/PrivateMessageAlert";
 const Order = () => {
   // eslint-disable-next-line no-unused-vars
